@@ -48,10 +48,10 @@ class NativeHasherTest extends PHPUnit_Framework_TestCase {
 	{
 		$hasher         = new Hasher;
 		$password       = 'f00b@rB@zb@T';
-		$hashedPassword = $hasher->hash($password);
+		$hashedPassword = $hasher->hash($password, null);
 
-		$this->assertTrue($hasher->checkHash($password, $hashedPassword));
-		$this->assertFalse($hasher->checkHash($password.'$', $hashedPassword));
+		$this->assertTrue($hasher->checkHash($password, $hashedPassword, null));
+		$this->assertFalse($hasher->checkHash($password.'$', $hashedPassword, null));
 	}
 
 	/**
@@ -73,7 +73,7 @@ class NativeHasherTest extends PHPUnit_Framework_TestCase {
 
 			$hasher = new Hasher;
 
-			$hasher->hash('foo');
+			$hasher->hash('foo', null);
 		}
 	}
 

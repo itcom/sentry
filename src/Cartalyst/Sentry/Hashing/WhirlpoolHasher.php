@@ -33,11 +33,8 @@ class WhirlpoolHasher implements HasherInterface {
 	 * @param  string  $string
 	 * @return string
 	 */
-	public function hash($string)
+	public function hash($string, $salt = '')
 	{
-		// Create salt
-		$salt = $this->createSalt();
-
 		return $salt.hash('whirlpool', $salt.$string);
 	}
 
@@ -48,10 +45,8 @@ class WhirlpoolHasher implements HasherInterface {
 	 * @param  string  $hashedString
 	 * @return bool
 	 */
-	public function checkhash($string, $hashedString)
+	public function checkhash($string, $hashedString, $salt = '')
 	{
-		$salt = substr($hashedString, 0, $this->saltLength);
-
 		return ($salt.hash('whirlpool', $salt.$string)) === $hashedString;
 	}
 

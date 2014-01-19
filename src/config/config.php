@@ -42,11 +42,11 @@ return array(
 	|
 	| This option allows you to specify the default hasher used by Sentry
 	|
-	| Supported: "native", "bcrypt", "sha256", "whirlpool"
+	| Supported: "native", "bcrypt", "sha256", "whirlpool", "sha512"
 	|
 	*/
 
-	'hasher' => 'native',
+	'hasher' => 'sha512',
 
 	/*
 	|--------------------------------------------------------------------------

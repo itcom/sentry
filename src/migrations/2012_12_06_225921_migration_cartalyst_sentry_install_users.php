@@ -28,18 +28,19 @@ class MigrationCartalystSentryInstallUsers extends Migration {
 	 * @return void
 	 */
 	public function up()
-	{
+	{/*
 		Schema::create('users', function($table)
 		{
 			$table->increments('id');
 			$table->string('email');
-			$table->string('password');
+			$table->string('crypted_password');
+			$table->string('password_salt');
 			$table->text('permissions')->nullable();
 			$table->boolean('activated')->default(0);
 			$table->string('activation_code')->nullable();
 			$table->timestamp('activated_at')->nullable();
 			$table->timestamp('last_login')->nullable();
-			$table->string('persist_code')->nullable();
+			$table->string('persistence_token')->nullable();
 			$table->string('reset_password_code')->nullable();
 			$table->string('first_name')->nullable();
 			$table->string('last_name')->nullable();
@@ -51,7 +52,7 @@ class MigrationCartalystSentryInstallUsers extends Migration {
 			$table->unique('email');
 			$table->index('activation_code');
 			$table->index('reset_password_code');
-		});
+		});*/
 	}
 
 	/**

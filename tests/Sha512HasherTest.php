@@ -19,10 +19,10 @@
  */
 
 use Mockery as m;
-use Cartalyst\Sentry\Hashing\Sha256Hasher as Hasher;
+use Cartalyst\Sentry\Hashing\Sha512Hasher as Hasher;
 use PHPUnit_Framework_TestCase;
 
-class Sha256HasherTest extends PHPUnit_Framework_TestCase {
+class Sha512HasherTest extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * Setup resources and dependencies.

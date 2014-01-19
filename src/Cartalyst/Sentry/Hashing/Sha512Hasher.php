@@ -18,14 +18,21 @@
  * @link       http://cartalyst.com
  */
 
-class Sha256Hasher implements HasherInterface {
+class Sha512Hasher implements HasherInterface {
 
 	/**
 	 * Salt Length
 	 *
 	 * @var int
 	 */
-	public $saltLength = 16;
+	public $saltLength = 21;
+	/**
+	 * Stretches
+	 *
+	 * @var int
+	 */
+	public $stretches = 20;
+
 
 	/**
 	 * Hash string.
@@ -35,7 +42,14 @@ class Sha256Hasher implements HasherInterface {
 	 */
 	public function hash($string, $salt = '')
 	{
-		return $salt.hash('sha256', $salt.$string);
+		$digest = $salt . $string;
+
+		for($i = 1; $i <= $stretches; $i++)
+		{
+			$digest = hash('sha512', $digest);
+		}
+
+		return $string;
 	}
 
 	/**
@@ -47,7 +61,13 @@ class Sha256Hasher implements HasherInterface {
 	 */
 	public function checkhash($string, $hashedString, $salt = '')
 	{
-		return ($salt.hash('sha256', $salt.$string)) === $hashedString;
+		$digest = $string . $salt;
+		for($i = 1; $i <= $this->stretches; $i++)
+		{
+			$digest = hash('sha512', $digest);
+		}
+
+		return $digest === $hashedString;
 	}
 
 	/**

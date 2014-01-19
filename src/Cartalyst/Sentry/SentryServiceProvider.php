@@ -24,6 +24,7 @@ use Cartalyst\Sentry\Hashing\BcryptHasher;
 use Cartalyst\Sentry\Hashing\NativeHasher;
 use Cartalyst\Sentry\Hashing\Sha256Hasher;
 use Cartalyst\Sentry\Hashing\WhirlpoolHasher;
+use Cartalyst\Sentry\Hashing\Sha512Hasher;
 use Cartalyst\Sentry\Sentry;
 use Cartalyst\Sentry\Sessions\IlluminateSession;
 use Cartalyst\Sentry\Throttling\Eloquent\Provider as ThrottleProvider;
@@ -85,6 +86,10 @@ class SentryServiceProvider extends ServiceProvider {
 
 				case 'whirlpool':
 					return new WhirlpoolHasher;
+					break;
+
+				case 'sha512':
+					return new Sha512Hasher;
 					break;
 			}
 

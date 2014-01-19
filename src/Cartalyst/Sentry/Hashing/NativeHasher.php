@@ -49,7 +49,7 @@ class NativeHasher implements HasherInterface {
 	 * @return string
 	 * @throws \RuntimeException
 	 */
-	public function hash($string)
+	public function hash($string, $salt = '')
 	{
 		// Usually caused by an old PHP environment, see
 		// https://github.com/cartalyst/sentry/issues/98#issuecomment-12974603
@@ -74,7 +74,7 @@ class NativeHasher implements HasherInterface {
 	 * @param  string  $hashedString
 	 * @return bool
 	 */
-	public function checkhash($string, $hashedString)
+	public function checkhash($string, $hashedString, $salt = '')
 	{
 		$verified = password_verify($string, $hashedString);
 		if ( ! $verified) 

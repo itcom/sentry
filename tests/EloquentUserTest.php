@@ -419,7 +419,7 @@ class EloquentUserTest extends PHPUnit_Framework_TestCase {
 	public function testHasherThrowsExceptionIfNotSet()
 	{
 		$user = new User;
-		$user->checkHash('foo', 'bar');
+		$user->checkHash('foo', 'bar', 'baz');
 	}
 
 	public function testRandomStrings()

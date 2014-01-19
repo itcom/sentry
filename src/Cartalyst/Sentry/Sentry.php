@@ -174,7 +174,7 @@ class Sentry {
 			throw new LoginRequiredException("The [$loginCredentialKey] attribute is required.");
 		}
 
-		if (empty($credentials['password']))
+		if (empty($credentials['crypted_password']))
 		{
 			throw new PasswordRequiredException('The password attribute is required.');
 		}

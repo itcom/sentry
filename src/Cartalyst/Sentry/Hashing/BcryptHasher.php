@@ -40,13 +40,10 @@ class BcryptHasher implements HasherInterface {
 	 * @param  string  $string
 	 * @return string
 	 */
-	public function hash($string)
+	public function hash($string, $salt = '')
 	{
 		// Format strength
 		$strength = str_pad($this->strength, 2, '0', STR_PAD_LEFT);
-
-		// Create salt
-		$salt = $this->createSalt();
 
 		//create prefix; $2y$ fixes blowfish weakness
 		$prefix = PHP_VERSION_ID < 50307 ? '$2a$' : '$2y$';
@@ -61,7 +58,7 @@ class BcryptHasher implements HasherInterface {
 	 * @param  string  $hashedString
 	 * @return bool
 	 */
-	public function checkhash($string, $hashedString)
+	public function checkhash($string, $hashedString, $salt = '')
 	{
 		return crypt($string, $hashedString) === $hashedString;
 	}

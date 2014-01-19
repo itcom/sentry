@@ -80,7 +80,7 @@ class User extends \ORM implements UserInterface {
 				array ('email'),
 				array (array ($this, 'unique_key_exists'), array (':value', 'email'))
 			),
-			'password' => array (
+			'crypted_password' => array (
 				array('not_empty')
 			)
 		);
@@ -92,7 +92,7 @@ class User extends \ORM implements UserInterface {
 	 * @var array
 	 */
 	protected $hashableAttributes = array(
-		'password',
+		'crypted_password',
 		'persist_code',
 	);
 
@@ -173,7 +173,7 @@ class User extends \ORM implements UserInterface {
 	 */
 	public function getPasswordName()
 	{
-		return 'password';
+		return 'crypted_password';
 	}
 
 	/**
@@ -184,6 +184,24 @@ class User extends \ORM implements UserInterface {
 	public function getPassword()
 	{
 		return $this->password;
+	}
+
+	/**
+	 * Returns the user's password_salt.
+	 *
+	 * @return string
+	 */
+	public function getPasswordSalt()
+	{
+		if(isset($this->password_salt) && strlen($this->password_salt) > 0)
+		{
+			return $this->password_salt;
+		}
+		if(isset(static::$hasher->saltLength))
+		{
+			return $this->password_salt = static::$hasher->createSalt();
+		}
+		return null;
 	}
 
 	/**
@@ -307,7 +325,7 @@ class User extends \ORM implements UserInterface {
 		// Hash required fields when necessary
 		else if (in_array($column, $this->hashableAttributes) and ! empty($value))
 		{
-			$value = $this->hash($value);
+			$value = $this->hash($value, $this->getPasswordSalt());
 		}
 
 		parent::set($column, $value);
@@ -415,7 +433,7 @@ class User extends \ORM implements UserInterface {
 	 */
 	public function checkPassword($password)
 	{
-		return $this->checkHash($password, $this->getPassword());
+		return $this->checkHash($password, $this->getPassword(), $this->getPasswordSalt());
 	}
 
 	/**
@@ -742,14 +760,14 @@ class User extends \ORM implements UserInterface {
 	 * @return bool
 	 * @throws \RuntimeException
 	 */
-	public function checkHash($string, $hashedString)
+	public function checkHash($string, $hashedString, $salt)
 	{
 		if ( ! static::$hasher)
 		{
 			throw new \RuntimeException("A hasher has not been provided for the user.");
 		}
 
-		return static::$hasher->checkHash($string, $hashedString);
+		return static::$hasher->checkHash($string, $hashedString, $salt);
 	}
 
 	/**
@@ -759,14 +777,14 @@ class User extends \ORM implements UserInterface {
 	 * @return string
 	 * @throws \RuntimeException
 	 */
-	public function hash($string)
+	public function hash($string, $salt)
 	{
 		if ( ! static::$hasher)
 		{
 			throw new \RuntimeException("A hasher has not been provided for the user.");
 		}
 
-		return static::$hasher->hash($string);
+		return static::$hasher->hash($string, $salt);
 	}
 
 	/**

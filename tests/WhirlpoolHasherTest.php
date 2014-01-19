@@ -55,11 +55,12 @@ class WhirlpoolHasherTest extends PHPUnit_Framework_TestCase {
     public function testHashingIsAlwaysCorrect()
     {
         $hasher         = new Hasher;
-        $password       = 'f00b@rB@zb@T';
-        $hashedPassword = $hasher->hash($password);
+		$password       = 'f00b@rB@zb@T';
+		$salt =$hasher->createSalt();
+        $hashedPassword = $hasher->hash($password, $salt);
 
-        $this->assertTrue($hasher->checkHash($password, $hashedPassword));
-        $this->assertFalse($hasher->checkHash($password.'$', $hashedPassword));
+        $this->assertTrue($hasher->checkHash($password, $hashedPassword, $salt));
+        $this->assertFalse($hasher->checkHash($password.'$', $hashedPassword, $salt));
     }
 
 }

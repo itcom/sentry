@@ -43,10 +43,11 @@ class User extends Model implements UserInterface {
 	 * @var array
 	 */
 	protected $hidden = array(
-		'password',
+		'crypted_password',
 		'reset_password_code',
 		'activation_code',
-		'persist_code',
+		'persistence_token',
+		'password_salt',
 	);
 
 	/**
@@ -57,7 +58,8 @@ class User extends Model implements UserInterface {
 	protected $guarded = array(
 		'reset_password_code',
 		'activation_code',
-		'persist_code',
+		'persistence_token',
+		'password_salt',
 	);
 
 	/**
@@ -66,8 +68,8 @@ class User extends Model implements UserInterface {
 	 * @var array
 	 */
 	protected $hashableAttributes = array(
-		'password',
-		'persist_code',
+		'crypted_password',
+		'persistence_token',
 	);
 
 	/**
@@ -161,7 +163,7 @@ class User extends Model implements UserInterface {
 	 */
 	public function getPasswordName()
 	{
-		return 'password';
+		return 'crypted_password';
 	}
 
 	/**
@@ -171,7 +173,25 @@ class User extends Model implements UserInterface {
 	 */
 	public function getPassword()
 	{
-		return $this->password;
+		return $this->crypted_password;
+	}
+
+	/**
+	 * Returns the user's password_salt.
+	 *
+	 * @return string
+	 */
+	public function getPasswordSalt()
+	{
+		if(isset($this->password_salt) && strlen($this->password_salt) > 0)
+		{
+			return $this->password_salt;
+		}
+		if(isset(static::$hasher->saltLength))
+		{
+			return $this->password_salt = static::$hasher->createSalt();
+		}
+		return null;
 	}
 
 	/**
@@ -338,10 +358,10 @@ class User extends Model implements UserInterface {
 	 */
 	public function getPersistCode()
 	{
-		$this->persist_code = $this->getRandomString();
+		$this->persistence_token = $this->getRandomString();
 
 		// Our code got hashed
-		$persistCode = $this->persist_code;
+		$persistCode = $this->persistence_token;
 
 		$this->save();
 
@@ -361,7 +381,7 @@ class User extends Model implements UserInterface {
 			return false;
 		}
 
-		return $persistCode == $this->persist_code;
+		return $persistCode == $this->persistence_token;
 	}
 
 	/**
@@ -413,7 +433,7 @@ class User extends Model implements UserInterface {
 	 */
 	public function checkPassword($password)
 	{
-		return $this->checkHash($password, $this->getPassword());
+		return $this->checkHash($password, $this->getPassword(), $this->getPasswordSalt());
 	}
 
 	/**
@@ -454,7 +474,7 @@ class User extends Model implements UserInterface {
 	{
 		if ($this->checkResetPasswordCode($resetCode))
 		{
-			$this->password = $newPassword;
+			$this->crypted_password = $newPassword;
 			$this->reset_password_code = null;
 			return $this->save();
 		}
@@ -782,14 +802,14 @@ class User extends Model implements UserInterface {
 	 * @return bool
 	 * @throws RuntimeException
 	 */
-	public function checkHash($string, $hashedString)
+	public function checkHash($string, $hashedString, $salt)
 	{
 		if ( ! static::$hasher)
 		{
 			throw new \RuntimeException("A hasher has not been provided for the user.");
 		}
 
-		return static::$hasher->checkHash($string, $hashedString);
+		return static::$hasher->checkHash($string, $hashedString, $salt);
 	}
 
 	/**
@@ -799,14 +819,14 @@ class User extends Model implements UserInterface {
 	 * @return string
 	 * @throws RuntimeException
 	 */
-	public function hash($string)
+	public function hash($string, $salt)
 	{
 		if ( ! static::$hasher)
 		{
 			throw new \RuntimeException("A hasher has not been provided for the user.");
 		}
 
-		return static::$hasher->hash($string);
+		return static::$hasher->hash($string, $salt);
 	}
 
 	/**
@@ -862,7 +882,7 @@ class User extends Model implements UserInterface {
 		// Hash required fields when necessary
 		if (in_array($key, $this->hashableAttributes) and ! empty($value))
 		{
-			$value = $this->hash($value);
+			$value = $this->hash($value, $this->getPasswordSalt());
 		}
 
 		return parent::setAttribute($key, $value);
