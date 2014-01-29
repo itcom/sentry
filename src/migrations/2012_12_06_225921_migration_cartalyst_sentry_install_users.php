@@ -28,7 +28,7 @@ class MigrationCartalystSentryInstallUsers extends Migration {
 	 * @return void
 	 */
 	public function up()
-	{/*
+	{
 		Schema::create('users', function($table)
 		{
 			$table->increments('id');
@@ -52,7 +52,7 @@ class MigrationCartalystSentryInstallUsers extends Migration {
 			$table->unique('email');
 			$table->index('activation_code');
 			$table->index('reset_password_code');
-		});*/
+		});
 	}
 
 	/**
