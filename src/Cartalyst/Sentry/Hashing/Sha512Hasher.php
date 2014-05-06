@@ -44,7 +44,7 @@ class Sha512Hasher implements HasherInterface {
 	{
 		$digest = $salt . $string;
 
-		for($i = 1; $i <= $stretches; $i++)
+		for($i = 1; $i <= $this->stretches; $i++)
 		{
 			$digest = hash('sha512', $digest);
 		}
