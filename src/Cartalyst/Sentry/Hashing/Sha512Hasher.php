@@ -42,14 +42,13 @@ class Sha512Hasher implements HasherInterface {
 	 */
 	public function hash($string, $salt = '')
 	{
-		$digest = $salt . $string;
-
+		$digest = $string . $salt;
 		for($i = 1; $i <= $this->stretches; $i++)
 		{
 			$digest = hash('sha512', $digest);
 		}
 
-		return $string;
+		return $digest;
 	}
 
 	/**
