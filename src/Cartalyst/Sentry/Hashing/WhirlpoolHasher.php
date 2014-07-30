@@ -18,7 +18,7 @@
  * @link       http://cartalyst.com
  */
 
-class WhirlpoolHasher implements HasherInterface {
+class WhirlpoolHasher extends BaseHasher implements HasherInterface {
 
 	/**
 	 * Salt Length
@@ -47,7 +47,9 @@ class WhirlpoolHasher implements HasherInterface {
 	 */
 	public function checkhash($string, $hashedString, $salt = '')
 	{
-		return ($salt.hash('whirlpool', $salt.$string)) === $hashedString;
+		$salt = substr($hashedString, 0, $this->saltLength);
+
+		return $this->slowEquals($salt.hash('whirlpool', $salt.$string), $hashedString);
 	}
 
 	/**
